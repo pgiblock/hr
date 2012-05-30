@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 
+#define HR_SYMBOL "HR_SYMBOL"
+
 static void
 print_usage (char *exe) {
 	fprintf(stderr, "Usage: %s [symbol]\n", exe);
@@ -14,11 +16,17 @@ main (int argc, char **argv) {
 	struct winsize ws;
 	int len, i;
 
-	char *str;
+	char *str, *tmp;
 	switch (argc) {
 		case 1:
-			str = "=";
-			len = 1;
+			tmp = getenv(HR_SYMBOL);
+			if (tmp) {
+				str = tmp;
+				len = strlen(tmp);
+			} else {
+				str = "=";
+				len = 1;
+			}
 			break;
 		case 2:
 			str = argv[1];
