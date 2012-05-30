@@ -7,8 +7,9 @@
 #define HR_SYMBOL "HR_SYMBOL"
 
 static void
-print_usage (char *exe) {
-	fprintf(stderr, "Usage: %s [symbol]\n", exe);
+print_usage (FILE *f, char *exe) {
+	//TODO: New usage: hr [-s<line>] text to center
+	fprintf(f, "Usage: %s [symbol]\n", exe);
 }
 
 int
@@ -28,13 +29,21 @@ main (int argc, char **argv) {
 				len = 1;
 			}
 			break;
+
 		case 2:
+			if (!strcmp(argv[1], "--help")) {
+				print_usage(stdout, argv[0]);
+				printf("Displays a horizontal rule for finding your place in terminal history.\n");
+				exit(0);
+			}
 			str = argv[1];
 			len = strlen(str);
 			break;
+
 		default:
 			// TODO: Concatenate all arguments with spaces (and print an extra space between repetitions)
-			print_usage(argv[0]);
+			fprintf(stderr, "Error: unexpected number of arguments\n");
+			print_usage(stderr, argv[0]);
 			exit(1);
 	}
 			
@@ -44,9 +53,11 @@ main (int argc, char **argv) {
 	fputs("\033[A", stdout);
 
 	// Print horizontal rule
+	// TODO: Handle cols < len
 	for (i = 0; i <= ws.ws_col-len; i += len) {
 		fputs(str, stdout);
 	}
+	// The remainder
 	// TODO: Or just newline if i < cols?
 	for (; i < ws.ws_col; ++i) {
 		putchar(' ');
