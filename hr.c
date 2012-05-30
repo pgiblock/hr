@@ -58,10 +58,8 @@ main (int argc, char **argv) {
 		fputs(str, stdout);
 	}
 	// The remainder
-	// TODO: Or just newline if i < cols?
-	for (; i < ws.ws_col; ++i) {
-		putchar(' ');
-	}
+	fwrite(str, 1, ws.ws_col-i, stdout);
+
 	return 0;
 }
 
