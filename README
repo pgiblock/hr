@@ -14,4 +14,14 @@ Assuming the bash shell:
 
     export HR_SYMBOL=":-) "
 
+Finally, note that Unicode is supported, so you can have fun with box-drawing
+characters and other symbols.  For instance, the following UTF-8 encoded example
+renders a line of flowery asterisks:
+
+    export HR_SYMBOL='✱ ✲ ✳ ❃ ❂ ❁ ❀ ✿ ✾ ✽ ✼ ✻ '
+
+Or, a squiggly line:
+
+    export HR_SYMBOL='°º¤ø,¸¸,ø¤º°`' 
+
 Please send any comments and suggestions to Paul Giblock <p at pgiblock dot net>
