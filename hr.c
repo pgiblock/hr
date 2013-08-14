@@ -1,15 +1,14 @@
-#define _XOPEN_SOURCE
+#include <errno.h>
+#include <error.h>
+#include <iconv.h>
+#include <langinfo.h>
+#include <locale.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/ioctl.h>
-#include <iconv.h>
-#include <langinfo.h>
-#include <locale.h>
-#include <errno.h>
-#include <error.h>
 #include <wchar.h>
+#include <sys/ioctl.h>
 
 #define ENV_SYMBOL "HR_SYMBOL"
 #define DEFAULT_ASCII_SYMBOL "="
