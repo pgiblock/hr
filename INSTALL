@@ -1,0 +1,7 @@
+We currently assume you have gcc, a real Makefile will follow.
+
+To build:
+    make 
+
+To install (assuming prefix of "/usr/local"):
+    sudo cp hr /usr/local/bin
