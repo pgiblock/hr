@@ -36,8 +36,26 @@ static void
 print_usage (FILE *f, char *exe)
 {
   //TODO: New usage: hr [-s<line>] text to center
-  fprintf(f, "Usage: %s [symbol]\n", exe);
+  fprintf(f, "Usage: %s [SYMBOL]\n", exe);
+  fputs("\
+Display a horizontal rule using the string, SYMBOL.\n\n\
+      --help     display this help and exit\n\
+      --version  output version information and exit\n", f);
 }
+
+
+static void
+print_version (FILE *f)
+{
+  fputs("\
+hr 0.1\n\
+Copyright (C) 2013 Paul Giblock\n\
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n\
+This is free software: you are free to change and redistribute it.\n\
+There is NO WARRANTY, to the extent permitted by law.\n\n\
+Written by Paul R. Giblock.\n", f);
+}
+
 
 int
 main (int argc, char **argv)
@@ -69,7 +87,10 @@ main (int argc, char **argv)
       // Argument specified: either a flag or a symbol
       if (strcmp(argv[1], "--help") == 0) {
         print_usage(stdout, argv[0]);
-        printf("Displays a horizontal rule for finding your place in terminal history.\n");
+        exit(0);
+      }
+      if (strcmp(argv[1], "--version") == 0) {
+        print_version(stdout);
         exit(0);
       }
       sym = argv[1];
