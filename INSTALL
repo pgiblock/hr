@@ -1,10 +1,11 @@
-We currently assume you have gcc, a real Makefile will follow.
+To configure if you don't wish to change any defaults:
+    ./waf configure
 
-To build with gcc:
-    make 
+However, you may wish to install into a particular location:
+    ./waf configure --prefix=/opt/hr
 
-To build with another compiler:
-    make CC=icc
+Now you can build once everything has been configured:
+    ./waf
 
-To install (assuming prefix of "/usr/local"):
-    sudo cp hr /usr/local/bin
+Finally, you can install hr if you wish:
+    sudo ./waf install
