@@ -1,7 +1,10 @@
 We currently assume you have gcc, a real Makefile will follow.
 
-To build:
+To build with gcc:
     make 
+
+To build with another compiler:
+    make CC=icc
 
 To install (assuming prefix of "/usr/local"):
     sudo cp hr /usr/local/bin

@@ -17,7 +17,6 @@
  */
 
 #include <errno.h>
-#include <error.h>
 #include <iconv.h>
 #include <langinfo.h>
 #include <locale.h>
@@ -109,10 +108,10 @@ main (int argc, char **argv)
   if (cd == (iconv_t) -1) {
     /* Something went wrong.  */
     if (errno == EINVAL) {
-      error (0, 0, "conversion from '%s' to wchar_t not available",
-          codeset);
+      fprintf(stderr, "conversion from '%s' to wchar_t not available: %s.",
+          codeset, strerror(errno));
     } else {
-      perror ("iconv_open");
+      perror("iconv_open");
     }
     exit(1);
   }
