@@ -14,4 +14,4 @@ def configure(conf):
 def build(bld):
     bld.program(source='hr.c', target='hr', defines='_XOPEN_SOURCE',
             lib=bld.env['LIB_ICONV'])
-    bld.install_files('${PREFIX}/bin', ['hr'])
+    bld.install_files('${PREFIX}/bin', ['hr'], chmod=0755)
