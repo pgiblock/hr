@@ -151,8 +151,9 @@ main (int argc, char *argv[])
   }
   len = wcslen(w_sym);
 
+  // Don't accept input that could never span the screen
   if (wcswidth(w_sym, len) <= 0) {
-    error("symbol has invalid length.", 0);
+    error("symbol has invalid length", 0);
     exit(EXIT_FAILURE);
   }
 
@@ -169,10 +170,9 @@ main (int argc, char *argv[])
     i = (i+1) % len;
   }
 
-
   if (iconv_close(cd) != 0) {
     error("could not close character set conversion", 1);
-    // Whatever... just complete termination at this point
+    // Fall-thru: Whatever... just complete termination at this point
   }
 
   free(w_sym);
