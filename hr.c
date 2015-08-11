@@ -31,11 +31,13 @@
 #define DEFAULT_ASCII_SYMBOL "="
 #define DEFAULT_UNICODE_SYMBOL "\u2550"
 
+const char *program_name;
+
 static void
-print_usage (FILE *f, char *exe)
+print_usage (FILE *f)
 {
   //TODO: New usage: hr [-s<line>] text to center
-  fprintf(f, "Usage: %s [SYMBOL]\n", exe);
+  fprintf(f, "Usage: %s [SYMBOL]\n", program_name);
   fputs("\
 Display a horizontal rule using the string, SYMBOL.\n\n\
       --help     display this help and exit\n\
@@ -56,8 +58,28 @@ Written by Paul R. Giblock.\n", f);
 }
 
 
+static void
+error (const char *format, int print_errmsg, ...)
+{
+  va_list args;
+  // Preamble
+  fputs(program_name, stderr);
+  fputs(": ", stderr);
+  // Program message
+  va_start(args, print_errmsg);
+  vfprintf(stderr, format, args);
+  va_end(args);
+  // Optional cause
+  if (print_errmsg) {
+    fputs(": ", stderr);
+    fputs(strerror(errno), stderr);
+  }
+  fputc('\n', stderr);
+}
+
+
 int
-main (int argc, char **argv)
+main (int argc, char *argv[])
 {
   struct winsize ws;
   int i, x;
@@ -65,6 +87,8 @@ main (int argc, char **argv)
   char    *sym, *wrptr;
   wchar_t *w_sym;
   size_t   in_cnt, out_cnt, len;
+
+  program_name = argv[0];
 
   setlocale(LC_ALL, "");
 
@@ -85,21 +109,21 @@ main (int argc, char **argv)
     case 2:
       // Argument specified: either a flag or a symbol
       if (strcmp(argv[1], "--help") == 0) {
-        print_usage(stdout, argv[0]);
-        exit(0);
+        print_usage(stdout);
+        exit(EXIT_SUCCESS);
       }
       if (strcmp(argv[1], "--version") == 0) {
         print_version(stdout);
-        exit(0);
+        exit(EXIT_SUCCESS);
       }
       sym = argv[1];
       break;
 
     default:
       // TODO: Concatenate all arguments with spaces (and print an extra space between repetitions)
-      fprintf(stderr, "Error: unexpected number of arguments\n");
-      print_usage(stderr, argv[0]);
-      exit(1);
+      error("unexpected number of arguments", 0);
+      print_usage(stderr);
+      exit(EXIT_FAILURE);
   }
 
   // Prepare for encoding conversion
@@ -108,12 +132,11 @@ main (int argc, char **argv)
   if (cd == (iconv_t) -1) {
     /* Something went wrong.  */
     if (errno == EINVAL) {
-      fprintf(stderr, "conversion from '%s' to wchar_t not available: %s.",
-          codeset, strerror(errno));
+      error("conversion from `%s' to wchar_t not available", 1, codeset);
     } else {
-      perror("iconv_open");
+      error("could not open character set conversion", 1);
     }
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
   // Convert to wide chars for truncation
@@ -121,11 +144,17 @@ main (int argc, char **argv)
   out_cnt = in_cnt * sizeof(wchar_t);
   w_sym = malloc(out_cnt);
   wrptr = (char *) w_sym;
-  // iconv(cd, NULL, NULL, &wrptr, &out_cnt);
+
   if (iconv(cd, &sym, &in_cnt, &wrptr, &out_cnt) == (size_t)-1) {
-    // ERROR
-  } 
+    error("could not perform character set conversion", 1);
+    exit(EXIT_FAILURE);
+  }
   len = wcslen(w_sym);
+
+  if (wcswidth(w_sym, len) <= 0) {
+    error("symbol has invalid length.", 0);
+    exit(EXIT_FAILURE);
+  }
 
   // Fetch the window size of the terminal
   ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws);
@@ -142,11 +171,11 @@ main (int argc, char **argv)
 
 
   if (iconv_close(cd) != 0) {
-    perror("iconv_close");
+    error("could not close character set conversion", 1);
+    // Whatever... just complete termination at this point
   }
 
   free(w_sym);
-
-  return 0;
+  return EXIT_SUCCESS;
 }
 
